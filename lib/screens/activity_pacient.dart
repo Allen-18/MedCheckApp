@@ -20,7 +20,7 @@ class ActivityScreenState extends State<ActivityScreen> {
 
   Future<void> _getActivitiesFromApi() async {
     final response =
-    await http.get(Uri.parse('https://example.com/api/recommendations'));
+        await http.get(Uri.parse('https://example.com/api/recommendations'));
     final data = jsonDecode(response.body);
 
     setState(() {
@@ -36,16 +36,16 @@ class ActivityScreenState extends State<ActivityScreen> {
       ),
       body: activities.isEmpty
           ? const Center(
-        child: CircularProgressIndicator(),
-      )
+              child: CircularProgressIndicator(),
+            )
           : ListView.builder(
-        itemCount: activities.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(activities[index]),
-          );
-        },
-      ),
+              itemCount: activities.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(activities[index]),
+                );
+              },
+            ),
     );
   }
 }

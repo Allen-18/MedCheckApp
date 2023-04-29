@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MenuScreen extends StatelessWidget {
-  const MenuScreen({super.key});
+  const MenuScreen({super.key, required access});
 
   @override
   Widget build(BuildContext context) {
     return _MenuScreen();
   }
 }
+
 class _MenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
             appBar:
-            AppBar(leading: const Text(''), title: const Text('App Menu')),
+                AppBar(leading: const Text(''), title: const Text('App Menu')),
             body: ListView(children: <Widget>[
               Card(
                 color: Colors.transparent,

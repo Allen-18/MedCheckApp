@@ -48,7 +48,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
             androidAllowWhileIdle: true,
             uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+                UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.time,
           );
         }
@@ -87,7 +87,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _deleteEvent(Map<String, dynamic> event) {
     setState(() {
       final events =
-      mySelectedEvents[DateFormat('yyyy-MM-dd').format(_selectedDate!)];
+          mySelectedEvents[DateFormat('yyyy-MM-dd').format(_selectedDate!)];
       if (events != null) {
         events.remove(event);
         if (events.isEmpty) {
@@ -148,17 +148,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     print(desController.text);
                     setState(() {
                       if (mySelectedEvents[DateFormat('yyyy-MM-dd')
-                          .format(_selectedDate!)] !=
+                              .format(_selectedDate!)] !=
                           null) {
                         mySelectedEvents[
-                        DateFormat('yyyy-MM-dd').format(_selectedDate!)]
+                                DateFormat('yyyy-MM-dd').format(_selectedDate!)]
                             ?.add({
                           "eventTitle": titleController.text,
                           "eventDescp": desController.text,
                         });
                       } else {
                         mySelectedEvents[
-                        DateFormat('yyyy-MM-dd').format(_selectedDate!)] = [
+                            DateFormat('yyyy-MM-dd').format(_selectedDate!)] = [
                           {
                             "eventTitle": titleController.text,
                             "eventDescp": desController.text,
@@ -221,7 +221,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               eventLoader: _listOfDayEvents,
             ),
             ..._listOfDayEvents(_selectedDate!).map(
-                  (myEvents) => ListTile(
+              (myEvents) => ListTile(
                 leading: const Icon(
                   Icons.done,
                   color: Colors.teal,

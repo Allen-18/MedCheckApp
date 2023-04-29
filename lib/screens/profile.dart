@@ -10,6 +10,7 @@ class ProfileScreen extends StatefulWidget {
   @override
   ProfileScreenState createState() => ProfileScreenState();
 }
+
 class ProfileScreenState extends State<ProfileScreen> {
   final _idController = TextEditingController();
   final _nameController = TextEditingController();
@@ -25,11 +26,13 @@ class ProfileScreenState extends State<ProfileScreen> {
     _diagnosticController.dispose();
     super.dispose();
   }
+
   @override
   void initState() {
     super.initState();
     _fetchProfileData();
   }
+
   Future<void> _fetchProfileData() async {
     //final response = await http.get(Uri.parse('your-url-here'));
     // Parse response data and update text fields using setState
@@ -54,85 +57,88 @@ class ProfileScreenState extends State<ProfileScreen> {
       _isLoading = false;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(), title: const Text('Profil pacient'),
+        leading: const BackButton(),
+        title: const Text('Profil pacient'),
       ),
       body: _isLoading
-          ? const Center(child:CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Form(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          children: <Widget>[
-            imageProfile(),
-            const SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: _idController,
-              style: const TextStyle(fontSize: 20),
-              decoration: const InputDecoration(
-                labelText: 'ID',
-                labelStyle: TextStyle(fontSize: 20),
-                contentPadding: EdgeInsets.symmetric(vertical: 16),
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(
-                  Icons.person,
-                  color: Colors.blue,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue),
-                ),
+              child: ListView(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                children: <Widget>[
+                  imageProfile(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: _idController,
+                    style: const TextStyle(fontSize: 20),
+                    decoration: const InputDecoration(
+                      labelText: 'ID',
+                      labelStyle: TextStyle(fontSize: 20),
+                      contentPadding: EdgeInsets.symmetric(vertical: 16),
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Colors.blue,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: _nameController,
+                    style: const TextStyle(fontSize: 20),
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      labelStyle: TextStyle(fontSize: 20),
+                      contentPadding: EdgeInsets.symmetric(vertical: 16),
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Colors.blue,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: _diagnosticController,
+                    style: const TextStyle(fontSize: 20),
+                    decoration: const InputDecoration(
+                      labelText: 'Diagnose',
+                      labelStyle: TextStyle(fontSize: 20),
+                      contentPadding: EdgeInsets.symmetric(vertical: 16),
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Colors.blue,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: _nameController,
-              style: const TextStyle(fontSize: 20),
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                labelStyle: TextStyle(fontSize: 20),
-                contentPadding: EdgeInsets.symmetric(vertical: 16),
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(
-                  Icons.person,
-                  color: Colors.blue,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: _diagnosticController,
-              style: const TextStyle(fontSize: 20),
-              decoration: const InputDecoration(
-                labelText: 'Diagnose',
-                labelStyle: TextStyle(fontSize: 20),
-                contentPadding: EdgeInsets.symmetric(vertical: 16),
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(
-                  Icons.person,
-                  color: Colors.blue,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -143,8 +149,8 @@ class ProfileScreenState extends State<ProfileScreen> {
           CircleAvatar(
             radius: 60.0,
             backgroundImage: _imageFile == null
-                ? const AssetImage('assets/images/profile.png') as ImageProvider<
-                Object>?
+                ? const AssetImage('assets/images/profile.png')
+                    as ImageProvider<Object>?
                 : FileImage(File(_imageFile!.path)),
           ),
           Positioned(
@@ -175,17 +181,15 @@ class ProfileScreenState extends State<ProfileScreen> {
   Widget bottomSheet() {
     return Container(
       height: 100,
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
+      width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 20,
       ),
       child: Column(
         children: <Widget>[
-          const Text("Alege o poza de profil",
+          const Text(
+            "Alege o poza de profil",
             style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
@@ -226,6 +230,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       });
     }
   }
+
   Widget idTextField() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),

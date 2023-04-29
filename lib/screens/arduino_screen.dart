@@ -37,7 +37,8 @@ class ArduinoScreenState extends State<ArduinoScreen> {
     });
 
     if (kDebugMode) {
-      print('Received data: pulse=$pulse, ecg=$ecg, humidity=$humidity, temperature=$temperature');
+      print(
+          'Received data: pulse=$pulse, ecg=$ecg, humidity=$humidity, temperature=$temperature');
     }
   }
 
