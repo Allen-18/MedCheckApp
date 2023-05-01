@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/menuApp',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/menuApp': (context) => const MenuScreen(access: null),
+        '/menuApp': (context) => const MenuScreen(access: null, refresh: null,),
         '/profilePatient': (context) => const ProfileScreen(),
         '/calendar': (context) => const CalendarScreen(),
         '/recommendations': (context) => const ReferenceScreen(),

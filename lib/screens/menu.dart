@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MenuScreen extends StatelessWidget {
-  const MenuScreen({super.key, required access});
+  const MenuScreen({super.key, required access, required refresh});
 
   @override
   Widget build(BuildContext context) {

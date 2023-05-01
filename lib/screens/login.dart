@@ -18,6 +18,8 @@ class LoginPageState extends State<LoginPage> {
   String?
       _usernameError; // add error variables for the email and password fields
   String? _passwordError;
+  String? _accessToken;
+  String? _refreshToken;
 
   Future<Map<String, dynamic>> login(String username, password) async {
     setState(() {
@@ -41,6 +43,7 @@ class LoginPageState extends State<LoginPage> {
       print("Request: ${url.toString()}");
       print("Headers: ${json.encode({'Content-Type': 'application/json'})}");
       print("Body: ${json.encode(body)}");
+      print("Response:${jsonDecode(_accessToken!)}");
     }
 
     try {
@@ -52,11 +55,41 @@ class LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         final tokenResponse = json.decode(response.body);
+        _accessToken = tokenResponse['access'];
+        _refreshToken = tokenResponse['refresh'];
         return {
-          'access': tokenResponse['access'],
+          'access': _accessToken,
+          'refresh': _refreshToken,
         };
       } else if (response.statusCode == 401) {
-        throw Exception('Incorrect username or password');
+        if (_refreshToken == null) {
+          throw Exception('Failed to refresh token: Refresh token is null');
+        }
+
+        final refreshUrl =
+        Uri.parse('http://medcheck.azurewebsites.net/api/auth/get_token/refresh/');
+
+        final refreshBody = {
+          'refresh': _refreshToken,
+        };
+
+        final refreshResponse = await http.post(
+          refreshUrl,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(refreshBody),
+        );
+
+        if (refreshResponse.statusCode == 200) {
+          final tokenResponse = json.decode(refreshResponse.body);
+          _accessToken = tokenResponse['access'];
+          _refreshToken = tokenResponse['refresh'];
+          return {
+            'access': _accessToken,
+          };
+        } else {
+          throw Exception(
+              'Failed to refresh token: ${refreshResponse.reasonPhrase} ${refreshResponse.body}');
+        }
       } else {
         throw Exception(
             'Failed to authenticate user: ${response.reasonPhrase} ${response.body}');
@@ -129,6 +162,7 @@ class LoginPageState extends State<LoginPage> {
                           MaterialPageRoute(
                             builder: (context) => MenuScreen(
                               access: result['access'],
+                                refresh: result ['refresh']
                             ),
                           ),
                         );
