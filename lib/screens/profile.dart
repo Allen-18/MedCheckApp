@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -12,41 +13,66 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
-  final _idController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _diagnosticController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _prenumeController;
+  late TextEditingController _istoricController;
+  late TextEditingController _alergiiController;
+  late TextEditingController _emailController;
+  final storage = const FlutterSecureStorage();
 
   bool _isLoading = true;
   XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
   @override
-  void dispose() {
-    _idController.dispose();
-    _nameController.dispose();
-    _diagnosticController.dispose();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController();
+    _prenumeController = TextEditingController();
+    _istoricController = TextEditingController();
+    _alergiiController = TextEditingController();
+    _emailController = TextEditingController();
     _fetchProfileData();
   }
 
   Future<void> _fetchProfileData() async {
-    //final response = await http.get(Uri.parse('your-url-here'));
-    // Parse response data and update text fields using setState
     setState(() {
       _isLoading = true;
     });
+    final accessToken = await storage.read(key: 'access');
 
     try {
-      final response = await http.get(Uri.parse('https://example.com/profile'));
-      final data = jsonDecode(response.body);
+      final response = await http.get(
+        Uri.parse('https://medcheck.azurewebsites.net/api/me/'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json'
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-      _idController.text = data['id'];
-      _nameController.text = data['name'];
-      _diagnosticController.text = data['diagnose'];
+        final nume = data['nume'];
+        final prenume = data['prenume'];
+        final istoric = data['istoric_medical'];
+        final alergii = data['alergii'];
+        final email = data['email'];
+        if (nume == null ||
+            nume.isEmpty ||
+            prenume == null ||
+            prenume.isEmpty) {
+          throw Exception('Name or surname is missing');
+        }
+        final formattedNume = nume.toString();
+        final formattedPrenume = prenume.toString();
+        _nameController.text = formattedNume;
+        _prenumeController.text = formattedPrenume;
+        _istoricController.text = istoric ?? '';
+        _alergiiController.text = alergii ?? '';
+        _emailController.text = email ?? '';
+      } else {
+        throw Exception(
+            'Failed to fetch profile data:${response.reasonPhrase} ${response.body}');
+      }
     } catch (e) {
       if (kDebugMode) {
         print('Error fetching profile data: $e');
@@ -64,80 +90,118 @@ class ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         leading: const BackButton(),
         title: const Text('Profil pacient'),
+        centerTitle: true,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Form(
-              child: ListView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                children: <Widget>[
-                  imageProfile(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: _idController,
-                    style: const TextStyle(fontSize: 20),
-                    decoration: const InputDecoration(
-                      labelText: 'ID',
-                      labelStyle: TextStyle(fontSize: 20),
-                      contentPadding: EdgeInsets.symmetric(vertical: 16),
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(
-                        Icons.person,
-                        color: Colors.blue,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
+          : ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              children: <Widget>[
+                imageProfile(),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _nameController,
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
+                    labelText: 'Nume',
+                    labelStyle: TextStyle(fontSize: 20),
+                    contentPadding: EdgeInsets.symmetric(vertical: 16),
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Colors.redAccent,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.redAccent),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: _nameController,
-                    style: const TextStyle(fontSize: 20),
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      labelStyle: TextStyle(fontSize: 20),
-                      contentPadding: EdgeInsets.symmetric(vertical: 16),
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(
-                        Icons.person,
-                        color: Colors.blue,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _prenumeController,
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
+                    labelText: 'Prenume',
+                    labelStyle: TextStyle(fontSize: 20),
+                    contentPadding: EdgeInsets.symmetric(vertical: 16),
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Colors.redAccent,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.redAccent),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: _diagnosticController,
-                    style: const TextStyle(fontSize: 20),
-                    decoration: const InputDecoration(
-                      labelText: 'Diagnose',
-                      labelStyle: TextStyle(fontSize: 20),
-                      contentPadding: EdgeInsets.symmetric(vertical: 16),
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(
-                        Icons.person,
-                        color: Colors.blue,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _istoricController,
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
+                    labelText: 'Istoric_medical',
+                    labelStyle: TextStyle(fontSize: 20),
+                    contentPadding: EdgeInsets.symmetric(vertical: 16),
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(
+                      Icons.medical_information,
+                      color: Colors.redAccent,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.redAccent),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _alergiiController,
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
+                    labelText: 'Alergii',
+                    labelStyle: TextStyle(fontSize: 20),
+                    contentPadding: EdgeInsets.symmetric(vertical: 16),
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(
+                      Icons.medical_information,
+                      color: Colors.redAccent,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.redAccent),
+                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _emailController,
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(fontSize: 20),
+                    contentPadding: EdgeInsets.symmetric(vertical: 16),
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.redAccent,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.redAccent),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
             ),
     );
   }
@@ -229,86 +293,5 @@ class ProfileScreenState extends State<ProfileScreen> {
         _imageFile = image;
       });
     }
-  }
-
-  Widget idTextField() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextFormField(
-        initialValue: '01',
-        style: const TextStyle(
-          fontSize: 20,
-        ),
-        decoration: const InputDecoration(
-          labelText: 'ID',
-          labelStyle: TextStyle(
-            fontSize: 20,
-          ),
-          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
-          border: OutlineInputBorder(),
-          prefixIcon: Icon(
-            Icons.person,
-            color: Colors.blue,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget nameTextField() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextFormField(
-        initialValue: 'Pop Ioana',
-        style: const TextStyle(
-          fontSize: 20,
-        ),
-        decoration: const InputDecoration(
-          labelText: 'Name',
-          labelStyle: TextStyle(
-            fontSize: 20,
-          ),
-          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
-          border: OutlineInputBorder(),
-          prefixIcon: Icon(
-            Icons.person,
-            color: Colors.blue,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget diagnosticTextField() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextFormField(
-        initialValue: 'BPOC',
-        style: const TextStyle(
-          fontSize: 20,
-        ),
-        decoration: const InputDecoration(
-          labelText: 'Diagnose',
-          labelStyle: TextStyle(
-            fontSize: 20,
-          ),
-          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
-          border: OutlineInputBorder(),
-          prefixIcon: Icon(
-            Icons.person,
-            color: Colors.blue,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue),
-          ),
-        ),
-      ),
-    );
   }
 }

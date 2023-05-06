@@ -1,4 +1,3 @@
-import 'package:practice/screens/activity_pacient.dart';
 import 'package:practice/screens/calendar.dart';
 import 'package:practice/screens/login.dart';
 import 'package:practice/screens/menu.dart';
@@ -32,15 +31,17 @@ class MyApp extends StatelessWidget {
       initialRoute: '/menuApp',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/menuApp': (context) => const MenuScreen(access: null, refresh: null,),
+        '/menuApp': (context) => const MenuScreen(
+              access: null,
+              refresh: null,
+            ),
         '/profilePatient': (context) => const ProfileScreen(),
         '/calendar': (context) => const CalendarScreen(),
         '/recommendations': (context) => const ReferenceScreen(),
-        '/activities': (context) => const ActivityScreen(),
         // '/connectArduino': (context) => const ArduinoScreen(),
         // '/graphics': (context) => const GraphicsScreen(),
       },
-      theme: ThemeData.light(
+      theme: ThemeData.dark(
           // This is the theme of your application.
           //
           // Try running your application with "flutter run". You'll see the

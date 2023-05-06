@@ -104,7 +104,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(
-          'Adauga un nou event',
+          'Adauga o noua activitate',
           textAlign: TextAlign.center,
         ),
         content: Column(
@@ -179,17 +179,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
+  HeaderStyle headerStyle = const HeaderStyle(
+    titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Event Calendar'),
+        title: const Text('Calendar Activitati'),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             TableCalendar(
+              headerStyle: headerStyle,
               firstDay: DateTime(2023),
               lastDay: DateTime(2024),
               focusedDay: _focusedDay,
@@ -211,6 +215,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   // Call `setState()` when updating calendar format
                   setState(() {
                     _calendarFormat = format;
+                    _focusedDay = _selectedDate!;
                   });
                 }
               },
@@ -224,7 +229,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               (myEvents) => ListTile(
                 leading: const Icon(
                   Icons.done,
-                  color: Colors.teal,
+                  color: Colors.redAccent,
                 ),
                 title: Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
@@ -242,7 +247,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddEventsDialog(),
-        label: const Text('Add Event'),
+        label: const Text(
+          'Adauga Activitate',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.red,
       ),
     );
   }

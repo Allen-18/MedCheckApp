@@ -1,77 +1,87 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:practice/models/post.dart';
-import 'package:practice/services/remote_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ReferenceScreen extends StatefulWidget {
   const ReferenceScreen({Key? key}) : super(key: key);
-
   @override
   ReferenceScreenState createState() => ReferenceScreenState();
 }
 
 class ReferenceScreenState extends State<ReferenceScreen> {
-  List<Post>? posts;
-  var isLoaded = false;
+  late String recomandari;
+  final storage = const FlutterSecureStorage();
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    getData();
+    _fetchProfileData();
   }
 
-  getData() async {
-    posts = await RemoteService().getPosts();
-    if (posts != null) {
-      setState(() {
-        isLoaded = true;
-      });
+  Future<void> _fetchProfileData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final accessToken = await storage.read(key: 'access');
+    try {
+      final response = await http.get(
+        Uri.parse('https://medcheck.azurewebsites.net/api/me/recomandari/'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<String> recomandari = List<String>.from(
+            data['results'].map((result) => result['tip_recomandare']));
+        this.recomandari = recomandari.join(', ');
+      } else {
+        throw Exception(
+            'Failed to fetch profile data:${response.reasonPhrase} ${response.body}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching profile data: $e');
+      }
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Recomandari medic'),
-        ),
-        body: Visibility(
-          visible: isLoaded,
-          replacement: const Center(
-            child: CircularProgressIndicator(),
-          ),
-          child: ListView.builder(
-            itemCount: posts?.length,
-            itemBuilder: (context, index) {
-              return Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(children: [
-                    Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.grey,
-                        )),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(posts![index].title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold)),
-                            Text(
-                              posts![index].body,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          ]),
-                    )
-                  ]));
-            },
-          ),
-        ));
+      appBar: AppBar(
+        leading: const BackButton(),
+        title: const Text('Recomandari'),
+        centerTitle: true,
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Recomandarile medicului sunt :',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    recomandari,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+    );
   }
 }

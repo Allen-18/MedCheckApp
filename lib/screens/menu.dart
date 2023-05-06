@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'app_drawer.dart';
+
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key, required access, required refresh});
 
@@ -15,8 +17,17 @@ class _MenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            appBar:
-                AppBar(leading: const Text(''), title: const Text('App Menu')),
+            endDrawer: const AppDrawer(),
+            appBar: AppBar(
+              title: const Text(
+                'App Menu',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 20,
+                ),
+              ),
+              centerTitle: true,
+            ),
             body: ListView(children: <Widget>[
               Card(
                 color: Colors.transparent,
@@ -64,19 +75,6 @@ class _MenuScreen extends StatelessWidget {
                     Navigator.pushNamed(context, '/recommendations');
                   },
                   title: Text("Recomandari medic",
-                      style: GoogleFonts.lato(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800)),
-                ),
-              ),
-              Card(
-                color: Colors.transparent,
-                child: ListTile(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/activities');
-                  },
-                  title: Text("Activitati recomandate",
                       style: GoogleFonts.lato(
                           fontSize: 20,
                           color: Colors.white,
