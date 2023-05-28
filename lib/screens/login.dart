@@ -174,9 +174,9 @@ class LoginPageState extends State<LoginPage> {
                       decoration: InputDecoration(
                         hintText: 'Username',
                         prefixIcon: const Icon(Icons
-                            .person), // Add an icon to the left of the text field
+                            .person),
                         filled:
-                            true, // Fill the background of the text field with a color
+                            true,
                         border: OutlineInputBorder(
                           // Add a border around the text field
                           borderRadius: BorderRadius.circular(10),
@@ -197,9 +197,9 @@ class LoginPageState extends State<LoginPage> {
                       decoration: InputDecoration(
                         hintText: 'Password',
                         prefixIcon: const Icon(Icons
-                            .password), // Add an icon to the left of the text field
+                            .password),
                         filled:
-                            true, // Fill the background of the text field with a color
+                            true,
                         border: OutlineInputBorder(
                           // Add a border around the text field
                           borderRadius: BorderRadius.circular(10),

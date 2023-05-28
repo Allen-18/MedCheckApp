@@ -1,3 +1,4 @@
+import 'package:practice/screens/arduino_screen.dart';
 import 'package:practice/screens/calendar.dart';
 import 'package:practice/screens/login.dart';
 import 'package:practice/screens/menu.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         '/profilePatient': (context) => const ProfileScreen(),
         '/calendar': (context) => const CalendarScreen(),
         '/recommendations': (context) => const ReferenceScreen(),
-        // '/connectArduino': (context) => const ArduinoScreen(),
+         '/connectArduino': (context) => const ArduinoScreen(),
         // '/graphics': (context) => const GraphicsScreen(),
       },
       theme: ThemeData.dark(
